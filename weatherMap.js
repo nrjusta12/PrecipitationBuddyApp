@@ -1,6 +1,6 @@
 // Define getPrecipitation outside of colorMap
 async function getPrecipitation() {
-  console.log('Starting getPrecipitation'); // Debug: Log start of function
+  console.log('Starting getPrecipitation - Updated'); // Debug: Log start of function with tweak
   const promises = Object.entries(stateRegions).flatMap(([state, regions]) =>
     regions.map(region =>
       fetch(`https://api.weather.gov/points/${region.lat},${region.lon}`, { headers: { 'User-Agent': userAgent } })
@@ -71,6 +71,5 @@ function getRegionCoords(state, region) {
 
 const userAgent = "PrecipitationBuddyApp (njusta@yahoo.com)";
 
-// New comment to force rebuild - No functional change
 colorMap(); // Call the colorMap function
-console.log('Script loaded'); // Confirm script is loaded
+console.log('Script loaded - Updated'); // Confirm script is loaded with tweak
