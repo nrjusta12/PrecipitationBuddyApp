@@ -71,5 +71,6 @@ function getRegionCoords(state, region) {
 
 const userAgent = "PrecipitationBuddyApp (njusta@yahoo.com)";
 
+// New comment to force rebuild - No functional change
 colorMap(); // Call the colorMap function
 console.log('Script loaded'); // Confirm script is loaded
