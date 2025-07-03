@@ -1,11 +1,12 @@
 // Define getPrecipitation outside of colorMap
 async function getPrecipitation() {
+  console.log('Starting getPrecipitation'); // Debug: Log start of function
   const promises = Object.entries(stateRegions).flatMap(([state, regions]) =>
     regions.map(region =>
       fetch(`https://api.weather.gov/points/${region.lat},${region.lon}`, { headers: { 'User-Agent': userAgent } })
         .then(response => response.json())
         .then(data => {
-          console.log(data.properties.forecast); // Debug: Log the forecast URL
+          console.log('Points Data:', data); // Debug: Log the entire points response
           return fetch(data.properties.forecast, { headers: { 'User-Agent': userAgent } })
             .then(response => {
               if (!response.ok) throw new Error('Forecast request failed');
@@ -69,3 +70,6 @@ function getRegionCoords(state, region) {
 }
 
 const userAgent = "PrecipitationBuddyApp (njusta@yahoo.com)";
+
+colorMap(); // Call the colorMap function
+console.log('Script loaded'); // Confirm script is loaded
