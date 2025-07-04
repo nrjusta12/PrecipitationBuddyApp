@@ -5,6 +5,9 @@ const stateRegions = {
   ]
 };
 
+// Define user agent
+const userAgent = "PrecipitationBuddyApp (njusta@yahoo.com)";
+
 // Define getPrecipitation outside of colorMap
 async function getPrecipitation() {
   console.log('Starting getPrecipitation'); // Debug: Log start of function
@@ -75,12 +78,6 @@ function getRegionCoords(state, region) {
   };
   return coords[`${state}-${region}`] || { x: 0, y: 0 };
 }
-
-const userAgent = "PrecipitationBuddyApp (njusta@yahoo.com)";
-
-colorMap(); // Call the colorMap function
-console.log('Script loaded'); // Confirm script is loaded
-const userAgent = "PrecipitationBuddyApp (njusta@yahoo.com)";
 
 colorMap(); // Call the colorMap function
 console.log('Script loaded'); // Confirm script is loaded
