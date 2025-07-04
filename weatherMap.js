@@ -1,25 +1,7 @@
-// Define state regions with coordinates
+// Define state regions with coordinates (testing with one region)
 const stateRegions = {
   "MN": [
-    { name: "NW MN", lat: 47.5, lon: -95.0 },
-    { name: "NE MN", lat: 47.5, lon: -92.0 },
-    { name: "SW MN", lat: 43.5, lon: -95.0 },
-    { name: "SE MN", lat: 43.5, lon: -92.0 },
-    { name: "Central MN", lat: 45.5, lon: -93.5 }
-  ],
-  "WI": [
-    { name: "NW WI", lat: 46.0, lon: -91.0 },
-    { name: "NE WI", lat: 46.0, lon: -87.0 },
-    { name: "SW WI", lat: 42.5, lon: -91.0 },
-    { name: "SE WI", lat: 42.5, lon: -87.0 },
-    { name: "Central WI", lat: 44.5, lon: -89.5 }
-  ],
-  "IL": [
-    { name: "NW IL", lat: 42.5, lon: -90.0 },
-    { name: "NE IL", lat: 42.5, lon: -87.5 },
-    { name: "SW IL", lat: 37.5, lon: -90.0 },
-    { name: "SE IL", lat: 37.5, lon: -87.5 },
-    { name: "Central IL", lat: 40.0, lon: -89.0 }
+    { name: "NW MN", lat: 47.5, lon: -95.0 }
   ]
 };
 
@@ -39,15 +21,21 @@ async function getPrecipitation() {
           return fetch(data.properties.forecast, { headers: { 'User-Agent': userAgent } })
             .then(response => {
               console.log('Forecast response status:', response.status); // Debug: Log forecast status
-              if (!response.ok) throw new Error('Forecast request failed');
+              if (!response.ok) {
+                console.log('Forecast error details:', response);
+                throw new Error('Forecast request failed');
+              }
               return response.json();
             })
-            .then(forecast => ({
-              state: state,
-              region: region.name,
-              precip: forecast.properties.periods[0].probabilityOfPrecipitation.value || 0
-            }))
+            .catch(error => {
+              console.log('Fetch error caught:', error); // Debug: Catch and log errors
+              return { state, region: region.name, precip: 0 }; // Fallback data
+            });
         })
+        .catch(error => {
+          console.log('Points fetch error:', error); // Debug: Catch initial fetch errors
+          return { state, region: region.name, precip: 0 }; // Fallback data
+        });
     })
   );
   const results = await Promise.all(promises);
@@ -76,30 +64,22 @@ function colorMap() {
       ctx.fillStyle = "black";
       ctx.fillText(`${item.precip}in`, coords.x + 10, coords.y + 20);
     });
+  }).catch(error => {
+    console.log('ColorMap error:', error); // Debug: Catch overall errors
   });
 }
 
 function getRegionCoords(state, region) {
   const coords = {
-    "MN-NW MN": { x: 50, y: 50 },
-    "MN-NE MN": { x: 100, y: 50 },
-    "MN-SW MN": { x: 50, y: 150 },
-    "MN-SE MN": { x: 100, y: 150 },
-    "MN-Central MN": { x: 75, y: 100 },
-    "WI-NW WI": { x: 120, y: 60 },
-    "WI-NE WI": { x: 170, y: 60 },
-    "WI-SW WI": { x: 120, y: 160 },
-    "WI-SE WI": { x: 170, y: 160 },
-    "WI-Central WI": { x: 145, y: 110 },
-    "IL-NW IL": { x: 190, y: 70 },
-    "IL-NE IL": { x: 240, y: 70 },
-    "IL-SW IL": { x: 190, y: 170 },
-    "IL-SE IL": { x: 240, y: 170 },
-    "IL-Central IL": { x: 215, y: 120 }
+    "MN-NW MN": { x: 50, y: 50 }
   };
   return coords[`${state}-${region}`] || { x: 0, y: 0 };
 }
 
+const userAgent = "PrecipitationBuddyApp (njusta@yahoo.com)";
+
+colorMap(); // Call the colorMap function
+console.log('Script loaded'); // Confirm script is loaded
 const userAgent = "PrecipitationBuddyApp (njusta@yahoo.com)";
 
 colorMap(); // Call the colorMap function
