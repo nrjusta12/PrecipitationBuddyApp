@@ -21,18 +21,20 @@ async function getPrecipitation() {
         })
         .then(data => {
           console.log('Points Data:', data); // Debug: Log the entire points response
-          return fetch(data.properties.forecast, { headers: { 'User-Agent': userAgent } })
+          return fetch(data.properties.forecastHourly, { headers: { 'User-Agent': userAgent } })
             .then(response => {
-              console.log('Forecast response status:', response.status); // Debug: Log forecast status
+              console.log('Hourly response status:', response.status); // Debug: Log hourly status
               if (!response.ok) {
-                console.log('Forecast error details:', response);
-                throw new Error('Forecast request failed');
+                console.log('Hourly error details:', response);
+                throw new Error('Hourly request failed');
               }
               return response.json();
             })
-            .then(forecast => {
-              console.log('Forecast Data:', forecast); // Debug: Log the entire forecast response
-              return { state, region: region.name, precip: forecast.properties.periods[0]?.probabilityOfPrecipitation?.value || 0 };
+            .then(hourly => {
+              console.log('Hourly Data:', hourly); // Debug: Log the entire hourly response
+              // Try to extract quantitative precipitation (in inches) - fallback to 0 if not available
+              const precip = hourly.properties.periods[0]?.quantitativePrecipitation?.value?.[0] || 0;
+              return { state, region: region.name, precip };
             })
             .catch(error => {
               console.log('Fetch error caught:', error); // Debug: Catch and log errors
@@ -60,17 +62,17 @@ function colorMap() {
     data.forEach(item => {
       console.log('Precipitation value for', item.region, ':', item.precip); // Debug: Log precipitation value
       let color;
-      if (item.precip < 1) color = "lightgray";
-      else if (item.precip <= 4) color = "lightblue";
-      else if (item.precip <= 8) color = "blue";
-      else if (item.precip <= 12) color = "darkblue";
-      else if (item.precip <= 18) color = "purple";
-      else color = "red";
+      if (item.precip === 0) color = "lightgray"; // 0 inches
+      else if (item.precip <= 1) color = "lightblue"; // 0-1 inch
+      else if (item.precip <= 2) color = "blue"; // 1-2 inches
+      else if (item.precip <= 4) color = "darkblue"; // 2-4 inches
+      else if (item.precip <= 6) color = "purple"; // 4-6 inches
+      else color = "red"; // 6+ inches
       const coords = getRegionCoords(item.state, item.region);
       ctx.fillStyle = color;
       ctx.fillRect(coords.x, coords.y, 50, 50); // Adjustable size
       ctx.fillStyle = "black";
-      ctx.fillText(`${item.precip || '0'}in`, coords.x + 10, coords.y + 20); // Use 0 if precip is undefined
+      ctx.fillText(`${item.precip || '0'}in`, coords.x + 10, coords.y + 20); // Use inches
     });
   }).catch(error => {
     console.log('ColorMap error:', error); // Debug: Catch overall errors
