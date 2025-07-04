@@ -54,6 +54,7 @@ function colorMap() {
     const ctx = map.getContext("2d");
     ctx.clearRect(0, 0, map.width, map.height);
     data.forEach(item => {
+      console.log('Precipitation value for', item.region, ':', item.precip); // Debug: Log precipitation value
       let color;
       if (item.precip < 1) color = "lightgray";
       else if (item.precip <= 4) color = "lightblue";
