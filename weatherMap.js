@@ -32,18 +32,18 @@ async function getPrecipitation() {
             })
             .catch(error => {
               console.log('Fetch error caught:', error); // Debug: Catch and log errors
-              return { state, region: region.name, precip: 0 }; // Fallback data
+              return { state, region: region.name, precip: 0 }; // Fallback data with state and region
             });
         })
         .catch(error => {
           console.log('Points fetch error:', error); // Debug: Catch initial fetch errors
-          return { state, region: region.name, precip: 0 }; // Fallback data
+          return { state, region: region.name, precip: 0 }; // Fallback data with state and region
         });
     })
   );
   const results = await Promise.all(promises);
   console.log('Precipitation results:', results); // Debug: Log final results
-  return results;
+  return results.map(result => ({ ...result, state: result.state || 'MN', region: result.region || 'Unknown' })); // Ensure state and region
 }
 
 // Define colorMap separately
@@ -66,7 +66,7 @@ function colorMap() {
       ctx.fillStyle = color;
       ctx.fillRect(coords.x, coords.y, 50, 50); // Adjustable size
       ctx.fillStyle = "black";
-      ctx.fillText(`${item.precip}in`, coords.x + 10, coords.y + 20);
+      ctx.fillText(`${item.precip || '0'}in`, coords.x + 10, coords.y + 20); // Use 0 if precip is undefined
     });
   }).catch(error => {
     console.log('ColorMap error:', error); // Debug: Catch overall errors
