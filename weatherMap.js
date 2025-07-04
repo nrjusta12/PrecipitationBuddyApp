@@ -30,6 +30,10 @@ async function getPrecipitation() {
               }
               return response.json();
             })
+            .then(forecast => {
+              console.log('Forecast Data:', forecast); // Debug: Log the entire forecast response
+              return { state, region: region.name, precip: forecast.properties.periods[0]?.probabilityOfPrecipitation?.value || 0 };
+            })
             .catch(error => {
               console.log('Fetch error caught:', error); // Debug: Catch and log errors
               return { state, region: region.name, precip: 0 }; // Fallback data with state and region
