@@ -1,3 +1,28 @@
+// Define state regions with coordinates
+const stateRegions = {
+  "MN": [
+    { name: "NW MN", lat: 47.5, lon: -95.0 },
+    { name: "NE MN", lat: 47.5, lon: -92.0 },
+    { name: "SW MN", lat: 43.5, lon: -95.0 },
+    { name: "SE MN", lat: 43.5, lon: -92.0 },
+    { name: "Central MN", lat: 45.5, lon: -93.5 }
+  ],
+  "WI": [
+    { name: "NW WI", lat: 46.0, lon: -91.0 },
+    { name: "NE WI", lat: 46.0, lon: -87.0 },
+    { name: "SW WI", lat: 42.5, lon: -91.0 },
+    { name: "SE WI", lat: 42.5, lon: -87.0 },
+    { name: "Central WI", lat: 44.5, lon: -89.5 }
+  ],
+  "IL": [
+    { name: "NW IL", lat: 42.5, lon: -90.0 },
+    { name: "NE IL", lat: 42.5, lon: -87.5 },
+    { name: "SW IL", lat: 37.5, lon: -90.0 },
+    { name: "SE IL", lat: 37.5, lon: -87.5 },
+    { name: "Central IL", lat: 40.0, lon: -89.0 }
+  ]
+};
+
 // Define getPrecipitation outside of colorMap
 async function getPrecipitation() {
   console.log('Starting getPrecipitation'); // Debug: Log start of function
