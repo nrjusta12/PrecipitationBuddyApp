@@ -32,6 +32,7 @@ async function getPrecipitation() {
             })
             .then(hourly => {
               console.log('Hourly Data:', hourly); // Debug: Log the entire hourly response
+              console.log('Hourly Periods:', hourly.properties.periods); // Debug: Log all periods
               // Check multiple periods for quantitative precipitation in inches
               let precip = 0;
               for (let period of hourly.properties.periods) {
