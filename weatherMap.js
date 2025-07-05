@@ -32,8 +32,14 @@ async function getPrecipitation() {
             })
             .then(hourly => {
               console.log('Hourly Data:', hourly); // Debug: Log the entire hourly response
-              // Try to extract quantitative precipitation (in inches) - fallback to 0 if not available
-              const precip = hourly.properties.periods[0]?.quantitativePrecipitation?.value?.[0] || 0;
+              // Check multiple periods for quantitative precipitation in inches
+              let precip = 0;
+              for (let period of hourly.properties.periods) {
+                if (period.quantitativePrecipitation?.value?.[0]) {
+                  precip = period.quantitativePrecipitation.value[0]; // Inches if available
+                  break;
+                }
+              }
               return { state, region: region.name, precip };
             })
             .catch(error => {
@@ -62,12 +68,15 @@ function colorMap() {
     data.forEach(item => {
       console.log('Precipitation value for', item.region, ':', item.precip); // Debug: Log precipitation value
       let color;
-      if (item.precip === 0) color = "lightgray"; // 0 inches
-      else if (item.precip <= 1) color = "lightblue"; // 0-1 inch
-      else if (item.precip <= 2) color = "blue"; // 1-2 inches
-      else if (item.precip <= 4) color = "darkblue"; // 2-4 inches
-      else if (item.precip <= 6) color = "purple"; // 4-6 inches
-      else color = "red"; // 6+ inches
+      if (item.precip === 0) {
+        // No color change, skip drawing
+        return; // Skip to next item
+      } else if (item.precip > 0 && item.precip < 1) color = "lightgray"; // 0.1-0.99 inches
+      else if (item.precip <= 4) color = "lightblue"; // 1-4 inches
+      else if (item.precip <= 8) color = "mediumblue"; // 4-8 inches
+      else if (item.precip <= 12) color = "darkblue"; // 8-12 inches
+      else if (item.precip <= 18) color = "purple"; // 12-18 inches
+      else color = "red"; // >18 inches
       const coords = getRegionCoords(item.state, item.region);
       ctx.fillStyle = color;
       ctx.fillRect(coords.x, coords.y, 50, 50); // Adjustable size
