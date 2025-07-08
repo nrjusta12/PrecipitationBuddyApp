@@ -1,7 +1,10 @@
-// Define state regions with coordinates (testing with one region)
+// Define state regions with coordinates (testing with MN and FL for potential rain)
 const stateRegions = {
   "MN": [
     { name: "NW MN", lat: 47.5, lon: -95.0 }
+  ],
+  "FL": [
+    { name: "SW FL", lat: 26.1, lon: -81.7 } // Southwest FL, prone to summer rain
   ]
 };
 
@@ -32,14 +35,16 @@ async function getPrecipitation() {
             })
             .then(hourly => {
               console.log('Hourly Data:', hourly); // Debug: Log the entire hourly response
-              console.log('Hourly Periods:', hourly.properties.periods); // Debug: Log all periods
+              console.log('Hourly Periods Structure:', JSON.stringify(hourly.properties.periods, null, 2)); // Debug: Log periods structure
               // Check multiple periods for quantitative precipitation in inches
               let precip = 0;
               for (let period of hourly.properties.periods) {
                 if (period.quantitativePrecipitation?.value?.[0]) {
                   precip = period.quantitativePrecipitation.value[0]; // Inches if available
-                  break;
+                } else if (period.precipitation?.value?.[0]) { // Alternative path
+                  precip = period.precipitation.value[0]; // Try another possible field
                 }
+                if (precip > 0) break; // Stop at first non-zero value
               }
               return { state, region: region.name, precip };
             })
@@ -56,7 +61,7 @@ async function getPrecipitation() {
   );
   const results = await Promise.all(promises);
   console.log('Precipitation results:', results); // Debug: Log final results
-  return results.map(result => ({ ...result, state: result.state || 'MN', region: result.region || 'Unknown' })); // Ensure state and region
+  return results.map(result => ({ ...result, state: result.state || 'Unknown', region: result.region || 'Unknown' })); // Ensure state and region
 }
 
 // Define colorMap separately
@@ -91,7 +96,8 @@ function colorMap() {
 
 function getRegionCoords(state, region) {
   const coords = {
-    "MN-NW MN": { x: 50, y: 50 }
+    "MN-NW MN": { x: 50, y: 50 },
+    "FL-SW FL": { x: 100, y: 50 } // New coord for SW FL
   };
   return coords[`${state}-${region}`] || { x: 0, y: 0 };
 }
