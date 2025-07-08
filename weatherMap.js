@@ -36,15 +36,16 @@ async function getPrecipitation() {
             .then(hourly => {
               console.log('Hourly Data:', hourly); // Debug: Log the entire hourly response
               console.log('Hourly Periods Structure:', JSON.stringify(hourly.properties.periods, null, 2)); // Debug: Log periods structure
-              // Check multiple periods for quantitative precipitation in inches
+              // Use probability of precipitation as a proxy for estimated inches
               let precip = 0;
               for (let period of hourly.properties.periods) {
-                if (period.quantitativePrecipitation?.value?.[0]) {
-                  precip = period.quantitativePrecipitation.value[0]; // Inches if available
-                } else if (period.precipitation?.value?.[0]) { // Alternative path
-                  precip = period.precipitation.value[0]; // Try another possible field
+                if (period.probabilityOfPrecipitation?.value) {
+                  const prob = period.probabilityOfPrecipitation.value;
+                  if (prob >= 70) precip = 0.5 + (prob - 70) * 0.01; // 70%+ = 0.5-1+ inches
+                  else if (prob >= 50) precip = 0.3 + (prob - 50) * 0.005; // 50-69% = 0.3-0.5 inches
+                  else if (prob >= 30) precip = 0.1 + (prob - 30) * 0.002; // 30-49% = 0.1-0.2 inches
+                  if (precip > 0) break; // Use first significant probability
                 }
-                if (precip > 0) break; // Stop at first non-zero value
               }
               return { state, region: region.name, precip };
             })
@@ -87,7 +88,7 @@ function colorMap() {
       ctx.fillStyle = color;
       ctx.fillRect(coords.x, coords.y, 50, 50); // Adjustable size
       ctx.fillStyle = "black";
-      ctx.fillText(`${item.precip || '0'}in`, coords.x + 10, coords.y + 20); // Use inches
+      ctx.fillText(`${item.precip.toFixed(1)}in`, coords.x + 10, coords.y + 20); // Use inches with 1 decimal
     });
   }).catch(error => {
     console.log('ColorMap error:', error); // Debug: Catch overall errors
