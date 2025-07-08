@@ -26,7 +26,7 @@ async function getPrecipitation() {
           console.log('Points Data:', data); // Debug: Log the entire points response
           return fetch(data.properties.forecastHourly, { headers: { 'User-Agent': userAgent } })
             .then(response => {
-              console.log('Hourly response status:', response.status); // Debug: Log hourly status
+              console.log('Hourly response status:', response.status); // Log hourly status
               if (!response.ok) {
                 console.log('Hourly error details:', response);
                 throw new Error('Hourly request failed');
@@ -36,17 +36,17 @@ async function getPrecipitation() {
             .then(hourly => {
               console.log('Hourly Data:', hourly); // Debug: Log the entire hourly response
               console.log('Hourly Periods Structure:', JSON.stringify(hourly.properties.periods, null, 2)); // Debug: Log periods structure
-              // Use probability of precipitation as a proxy for estimated inches
-              let precip = 0;
+              // Find maximum probability of precipitation and estimate inches
+              let maxProb = 0;
               for (let period of hourly.properties.periods) {
-                if (period.probabilityOfPrecipitation?.value) {
-                  const prob = period.probabilityOfPrecipitation.value;
-                  if (prob >= 70) precip = 0.5 + (prob - 70) * 0.01; // 70%+ = 0.5-1+ inches
-                  else if (prob >= 50) precip = 0.3 + (prob - 50) * 0.005; // 50-69% = 0.3-0.5 inches
-                  else if (prob >= 30) precip = 0.1 + (prob - 30) * 0.002; // 30-49% = 0.1-0.2 inches
-                  if (precip > 0) break; // Use first significant probability
+                if (period.probabilityOfPrecipitation?.value > maxProb) {
+                  maxProb = period.probabilityOfPrecipitation.value;
                 }
               }
+              let precip = 0;
+              if (maxProb >= 70) precip = 0.5 + (maxProb - 70) * 0.01; // 70%+ = 0.5-1+ inches
+              else if (maxProb >= 50) precip = 0.3 + (maxProb - 50) * 0.005; // 50-69% = 0.3-0.5 inches
+              else if (maxProb >= 30) precip = 0.1 + (maxProb - 30) * 0.002; // 30-49% = 0.1-0.2 inches
               return { state, region: region.name, precip };
             })
             .catch(error => {
