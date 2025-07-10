@@ -2,7 +2,7 @@
 const stateRegions = {
   "MN": [{ name: "NW MN", lat: 47.5, lon: -95.0 }],
   "FL": [{ name: "SW FL", lat: 26.1, lon: -81.7 }],
-  "TX": [{ name: "SE TX", lat: 29.0, lon: -95.0 }]
+  "TX": [{ name: "SE TX", lat: 29.76, lon: -95.38 }] // Updated to Houston area
 };
 
 // Define user agent
@@ -114,13 +114,15 @@ function colorMap() {
         }
         ctx.closePath();
         let color;
-        if (item.precip === 0) color = "white";
+        if (item.precip === 0) color = "white"; // Visible outline for 0in
         else if (item.precip > 0 && item.precip < 1) color = "lightgray";
         else if (item.precip <= 4) color = "lightblue";
         else if (item.precip <= 8) color = "mediumblue";
         else if (item.precip <= 12) color = "darkblue";
         else if (item.precip <= 18) color = "purple";
         else color = "red";
+        ctx.strokeStyle = "black"; // Add outline for visibility
+        ctx.stroke();
         ctx.fillStyle = color;
         ctx.fill();
         ctx.fillStyle = "black";
