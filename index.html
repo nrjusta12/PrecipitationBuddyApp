@@ -3,11 +3,20 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    #appMap { border: 1px solid black; }
+    #appMap { border: 1px solid black; max-width: 100%; }
+    .state { fill: lightgray; stroke: black; stroke-width: 1; }
+    .controls { position: absolute; top: 10px; left: 10px; }
+    button { margin: 5px; }
   </style>
 </head>
 <body>
-  <canvas id="appMap" width="400" height="200"></canvas>
+  <svg id="appMap" width="400" height="200" viewBox="0 0 960 600" preserveAspectRatio="xMidYMid meet">
+    <!-- Simplified U.S. state outlines (example MN, FL, TX) -->
+    <path class="state" id="MN" d="M50,50 L100,50 L120,100 L80,150 L50,50" />
+    <path class="state" id="FL" d="M150,50 L200,50 L220,100 L180,150 L150,50" />
+    <path class="state" id="TX" d="M250,50 L300,50 L320,100 L280,150 L250,50" />
+  </svg>
+  <div class="controls"></div>
   <script src="weatherMap.js" defer></script>
 </body>
 </html>
