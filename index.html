@@ -8,11 +8,12 @@
     .controls { position: absolute; top: 10px; left: 10px; }
     button { margin: 5px; }
     .legend { position: absolute; top: 10px; right: 10px; font-size: 12px; }
+    .legend span { display: inline-block; width: 12px; height: 12px; margin-right: 5px; }
   </style>
 </head>
 <body>
   <svg id="appMap" width="400" height="200" viewBox="0 0 960 600" preserveAspectRatio="xMidYMid meet">
-    <!-- Simplified U.S. state outlines (example subset) -->
+    <!-- Simplified U.S. state outlines for MN, FL, TX -->
     <path class="state" id="MN" d="M120,50 L170,50 L190,100 L150,150 L120,50" />
     <path class="state" id="FL" d="M300,100 L350,100 L370,150 L330,200 L300,100" />
     <path class="state" id="TX" d="M200,150 L250,150 L270,200 L230,250 L200,150" />
@@ -20,7 +21,13 @@
   </svg>
   <div class="controls"></div>
   <div class="legend">
-    Legend: <br> 0.1-0.99in: lightgray <br> 1-4in: lightblue <br> 4-8in: mediumblue
+    <strong>Legend:</strong><br>
+    <span style="background-color: lightgray;"></span> 0.1-0.99in<br>
+    <span style="background-color: lightblue;"></span> 1-4in<br>
+    <span style="background-color: mediumblue;"></span> 4-8in<br>
+    <span style="background-color: darkblue;"></span> 8-12in<br>
+    <span style="background-color: purple;"></span> 12-18in<br>
+    <span style="background-color: red;"></span> >18in
   </div>
   <script src="weatherMap.js" defer></script>
 </body>
