@@ -87,7 +87,7 @@ function colorMap() {
         else if (item.precip <= 18) color = "purple";
         else color = "red";
         statePath.style.fill = color;
-        statePath.style.opacity = window.selectedStates?.includes(item.state) ? 1 : 0; // Toggle visibility
+        statePath.style.opacity = window.selectedStates?.includes(item.state) ? 1 : 0;
         const centroid = { x: statePath.getBBox().x + statePath.getBBox().width / 2, y: statePath.getBBox().y + statePath.getBBox().height / 2 };
         const text = map.querySelector(`#${item.state}-text`) || document.createElementNS("http://www.w3.org/2000/svg", "text");
         text.setAttribute("id", `${item.state}-text`);
