@@ -2,7 +2,9 @@
 const stateRegions = {
   "MN": [{ name: "NW MN", lat: 47.5, lon: -95.0 }],
   "FL": [{ name: "SW FL", lat: 26.1, lon: -81.7 }],
-  "TX": [{ name: "SE TX", lat: 29.76, lon: -95.38 }]
+  "TX": [{ name: "SE TX", lat: 29.76, lon: -95.38 }],
+  "CA": [{ name: "N CA", lat: 38.0, lon: -120.0 }], // Northern CA example
+  "NY": [{ name: "N NY", lat: 43.0, lon: -75.0 }]   // Northern NY example
 };
 
 // Define user agent
@@ -94,7 +96,7 @@ function colorMap() {
         text.setAttribute("y", centroid.y);
         text.setAttribute("text-anchor", "middle");
         text.setAttribute("fill", "black");
-        text.textContent = `${item.precip.toFixed(2)}in`; // Increased precision for rain
+        text.textContent = `${item.precip.toFixed(2)}in`;
         if (!map.querySelector(`#${item.state}-text`)) map.appendChild(text);
       }
     });
