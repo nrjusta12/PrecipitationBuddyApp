@@ -80,15 +80,15 @@ function colorMap() {
       if (statePath) {
         let color;
         if (item.precip === 0 || item.precip <= 0.1) color = "lightgray";
-        else if (item.precip <= 0.5) color = "lightblue";
-        else if (item.precip <= 1) color = "blue";
-        else if (item.precip <= 2) color = "darkblue";
-        else if (item.precip <= 4) color = "purple";
-        else color = "red";
+        else if (item.precip <= 0.5) color = "#b3e5fc";
+        else if (item.precip <= 1) color = "#42a5f5";
+        else if (item.precip <= 2) color = "#1e88e5";
+        else if (item.precip <= 4) color = "#ab47bc";
+        else color = "#e57373";
         statePath.style.fill = color;
         statePath.style.opacity = window.selectedStates?.includes(item.state) ? 1 : 0;
         const centroid = { x: statePath.getBBox().x + statePath.getBBox().width / 2, y: statePath.getBBox().y + statePath.getBBox().height / 2 };
-        const text = map.querySelector(`#${item.state}-text`) || document.createElementNS("http://www.w3.org/2000/svg", "text");
+        const text = map.querySelector(`#${item.state}-text`) or document.createElementNS("http://www.w3.org/2000/svg", "text");
         text.setAttribute("id", `${item.state}-text`);
         text.setAttribute("x", centroid.x);
         text.setAttribute("y", centroid.y);
