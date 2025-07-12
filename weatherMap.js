@@ -40,8 +40,8 @@ async function getPrecipitation(regions) {
         }
         let precip = 0;
         if (maxProb >= 70) precip = 0.5 + (maxProb - 70) * 0.01;
-        else if (maxProb >= 50) precip = 0.3 + (maxProb - 50) * 0.005;
-        else if (maxProb >= 30) precip = 0.1 + (maxProb - 30) * 0.002;
+        else if (maxProb >= 50) precip = 0.25 + (maxProb - 50) * 0.005;
+        else if (maxProb >= 30) precip = 0.01 + (maxProb - 30) * 0.002;
         console.log(`Max probability for ${region.name}: ${maxProb}%, Precip: ${precip}in`);
         return { state: Object.keys(stateRegions).find(state => stateRegions[state].includes(region)), region: region.name, precip };
       })
@@ -79,12 +79,11 @@ function colorMap() {
       const statePath = map.querySelector(`#${item.state}`);
       if (statePath) {
         let color;
-        if (item.precip === 0) color = "white";
-        else if (item.precip > 0 && item.precip < 1) color = "lightgray";
-        else if (item.precip <= 4) color = "lightblue";
-        else if (item.precip <= 8) color = "mediumblue";
-        else if (item.precip <= 12) color = "darkblue";
-        else if (item.precip <= 18) color = "purple";
+        if (item.precip === 0 || item.precip <= 0.1) color = "lightgray";
+        else if (item.precip <= 0.5) color = "lightblue";
+        else if (item.precip <= 1) color = "blue";
+        else if (item.precip <= 2) color = "darkblue";
+        else if (item.precip <= 4) color = "purple";
         else color = "red";
         statePath.style.fill = color;
         statePath.style.opacity = window.selectedStates?.includes(item.state) ? 1 : 0;
@@ -95,7 +94,7 @@ function colorMap() {
         text.setAttribute("y", centroid.y);
         text.setAttribute("text-anchor", "middle");
         text.setAttribute("fill", "black");
-        text.textContent = `${item.precip.toFixed(1)}in`;
+        text.textContent = `${item.precip.toFixed(2)}in`; // Increased precision for rain
         if (!map.querySelector(`#${item.state}-text`)) map.appendChild(text);
       }
     });
