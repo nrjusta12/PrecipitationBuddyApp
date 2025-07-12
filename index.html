@@ -9,25 +9,32 @@
     button { margin: 5px; }
     .legend { position: absolute; top: 10px; right: 10px; font-size: 12px; }
     .legend span { display: inline-block; width: 12px; height: 12px; margin-right: 5px; }
+    .legend-rain, .legend-snow { margin-bottom: 10px; }
   </style>
 </head>
 <body>
   <svg id="appMap" width="400" height="200" viewBox="0 0 960 600" preserveAspectRatio="xMidYMid meet">
-    <!-- Simplified U.S. state outlines for MN, FL, TX -->
-    <path class="state" id="MN" d="M120,50 L170,50 L190,100 L150,150 L120,50" />
-    <path class="state" id="FL" d="M300,100 L350,100 L370,150 L330,200 L300,100" />
-    <path class="state" id="TX" d="M200,150 L250,150 L270,200 L230,250 L200,150" />
-    <!-- Add more states as needed -->
+    <!-- Approximate state outlines (simplified for trial) -->
+    <path class="state" id="MN" d="M100,50 L150,50 L180,120 L140,180 L100,50" /> <!-- Rough MN outline -->
+    <path class="state" id="FL" d="M300,150 L340,150 L360,200 L320,250 L300,150" /> <!-- Rough FL outline -->
+    <path class="state" id="TX" d="M200,200 L250,200 L280,250 L240,300 L200,200" /> <!-- Rough TX outline -->
   </svg>
   <div class="controls"></div>
   <div class="legend">
-    <strong>Legend:</strong><br>
-    <span style="background-color: lightgray;"></span> 0.1-0.99in<br>
-    <span style="background-color: lightblue;"></span> 1-4in<br>
-    <span style="background-color: mediumblue;"></span> 4-8in<br>
-    <span style="background-color: darkblue;"></span> 8-12in<br>
-    <span style="background-color: purple;"></span> 12-18in<br>
-    <span style="background-color: red;"></span> >18in
+    <div class="legend-rain"><strong>Rain Legend:</strong><br>
+      <span style="background-color: lightgray;"></span> <0.1"<br>
+      <span style="background-color: lightblue;"></span> 0.1 - 0.5"<br>
+      <span style="background-color: blue;"></span> 0.5 - 1"<br>
+      <span style="background-color: darkblue;"></span> 1 - 2"<br>
+      <span style="background-color: purple;"></span> 2 - 4"<br>
+      <span style="background-color: red;"></span> >4"</div>
+    <div class="legend-snow"><strong>Snow Legend:</strong><br>
+      <span style="background-color: lightgray;"></span> <1"<br>
+      <span style="background-color: lightblue;"></span> 1-4"<br>
+      <span style="background-color: blue;"></span> 4-8"<br>
+      <span style="background-color: darkblue;"></span> 8-12"<br>
+      <span style="background-color: purple;"></span> 12-18"<br>
+      <span style="background-color: red;"></span> >18"</div>
   </div>
   <script src="weatherMap.js" defer></script>
 </body>
