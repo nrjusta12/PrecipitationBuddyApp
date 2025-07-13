@@ -13,6 +13,7 @@ const userAgent = "PrecipitationBuddyApp (njusta@yahoo.com)";
 // Function to handle state selection
 function updateSelectedStates(selectedStates) {
   console.log('Selected states:', selectedStates);
+  window.selectedStates = selectedStates; // Ensure selectedStates is updated globally
   window.selectedRegions = Object.entries(stateRegions)
     .filter(([state]) => selectedStates.includes(state))
     .flatMap(([_, regions]) => regions);
@@ -106,7 +107,7 @@ function colorMap() {
 }
 
 // Initialize with default states
-window.selectedRegions = Object.values(stateRegions).flat();
+window.selectedStates = []; // Initialize selectedStates array
 window.addEventListener('load', () => {
   console.log('Window loaded, calling colorMap');
   colorMap();
@@ -118,8 +119,11 @@ window.addEventListener('load', () => {
     button.style.margin = '5px';
     button.addEventListener('click', () => {
       let selected = window.selectedStates || [];
-      if (selected.includes(state)) selected = selected.filter(s => s !== state);
-      else selected.push(state);
+      if (selected.includes(state)) {
+        selected = selected.filter(s => s !== state); // Remove state if already selected
+      } else {
+        selected.push(state); // Add state if not selected
+      }
       window.selectedStates = selected;
       updateSelectedStates(selected);
     });
