@@ -1,10 +1,25 @@
-// Define state regions with coordinates
+// Define state regions with multiple coordinates
 const stateRegions = {
-  "MN": [{ name: "NW MN", lat: 47.5, lon: -95.0 }],
-  "FL": [{ name: "SW FL", lat: 26.1, lon: -81.7 }],
-  "TX": [{ name: "SE TX", lat: 29.76, lon: -95.38 }],
-  "CA": [{ name: "N CA", lat: 38.0, lon: -120.0 }], // Northern CA example
-  "NY": [{ name: "N NY", lat: 43.0, lon: -75.0 }]   // Northern NY example
+  "MN": [
+    { name: "NW MN", lat: 47.5, lon: -95.0 },
+    { name: "SE MN", lat: 43.7, lon: -93.1 }
+  ],
+  "FL": [
+    { name: "SW FL", lat: 26.1, lon: -81.7 },
+    { name: "NE FL", lat: 30.3, lon: -81.4 }
+  ],
+  "TX": [
+    { name: "SE TX", lat: 29.76, lon: -95.38 },
+    { name: "NW TX", lat: 33.0, lon: -100.0 }
+  ],
+  "CA": [
+    { name: "N CA", lat: 38.0, lon: -120.0 },
+    { name: "S CA", lat: 34.0, lon: -118.0 }
+  ],
+  "NY": [
+    { name: "N NY", lat: 43.0, lon: -75.0 },
+    { name: "S NY", lat: 40.7, lon: -73.9 }
+  ]
 };
 
 // Define user agent
@@ -13,7 +28,7 @@ const userAgent = "PrecipitationBuddyApp (njusta@yahoo.com)";
 // Function to handle state selection
 function updateSelectedStates(selectedStates) {
   console.log('Selected states:', selectedStates);
-  window.selectedStates = selectedStates; // Ensure selectedStates is updated globally
+  window.selectedStates = selectedStates; // Ensure global update
   window.selectedRegions = Object.entries(stateRegions)
     .filter(([state]) => selectedStates.includes(state))
     .flatMap(([_, regions]) => regions);
@@ -77,6 +92,8 @@ function colorMap() {
       console.error('No precipitation data received');
       return;
     }
+    // Clear existing text elements
+    map.querySelectorAll('text').forEach(text => text.remove());
     data.forEach(item => {
       console.log(`Precipitation value for ${item.region}: ${item.precip}`);
       const statePath = map.querySelector(`#${item.state}`);
@@ -91,14 +108,14 @@ function colorMap() {
         statePath.style.fill = color;
         statePath.style.opacity = window.selectedStates?.includes(item.state) ? 1 : 0;
         const centroid = { x: statePath.getBBox().x + statePath.getBBox().width / 2, y: statePath.getBBox().y + statePath.getBBox().height / 2 };
-        const text = map.querySelector(`#${item.state}-text`) || document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.setAttribute("id", `${item.state}-text`);
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("id", `${item.state}-${item.region}-text`);
         text.setAttribute("x", centroid.x);
         text.setAttribute("y", centroid.y);
         text.setAttribute("text-anchor", "middle");
         text.setAttribute("fill", "black");
         text.textContent = `${item.precip.toFixed(2)}in`;
-        if (!map.querySelector(`#${item.state}-text`)) map.appendChild(text);
+        map.appendChild(text);
       }
     });
   }).catch(error => {
@@ -107,7 +124,7 @@ function colorMap() {
 }
 
 // Initialize with default states
-window.selectedStates = []; // Initialize selectedStates array
+window.selectedStates = [];
 window.addEventListener('load', () => {
   console.log('Window loaded, calling colorMap');
   colorMap();
@@ -120,9 +137,9 @@ window.addEventListener('load', () => {
     button.addEventListener('click', () => {
       let selected = window.selectedStates || [];
       if (selected.includes(state)) {
-        selected = selected.filter(s => s !== state); // Remove state if already selected
+        selected = selected.filter(s => s !== state); // Remove state
       } else {
-        selected.push(state); // Add state if not selected
+        selected.push(state); // Add state
       }
       window.selectedStates = selected;
       updateSelectedStates(selected);
