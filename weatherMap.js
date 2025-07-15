@@ -28,11 +28,11 @@ const userAgent = "PrecipitationBuddyApp (njusta@yahoo.com)";
 // Function to handle state selection
 function updateSelectedStates(selectedStates) {
   console.log('Selected states:', selectedStates);
-  window.selectedStates = selectedStates; // Ensure global update
+  window.selectedStates = selectedStates; // Update global state
   window.selectedRegions = Object.entries(stateRegions)
     .filter(([state]) => selectedStates.includes(state))
     .flatMap(([_, regions]) => regions);
-  colorMap();
+  colorMap(); // Redraw map with new selection
 }
 
 // Define getPrecipitation
@@ -86,27 +86,32 @@ function colorMap() {
     console.error('SVG element #appMap not found');
     return;
   }
-  getPrecipitation(window.selectedRegions || Object.values(stateRegions).flat()).then(data => {
+  getPrecipitation(window.selectedRegions || []).then(data => {
     console.log('ColorMap data:', data);
+    // Reset all states to hidden and white (no precipitation)
+    map.querySelectorAll('.state').forEach(path => {
+      path.style.opacity = 0;
+      path.style.fill = "white";
+    });
+    map.querySelectorAll('text').forEach(text => text.remove());
     if (!data || data.length === 0) {
       console.error('No precipitation data received');
       return;
     }
-    // Clear existing text elements
-    map.querySelectorAll('text').forEach(text => text.remove());
     data.forEach(item => {
       console.log(`Precipitation value for ${item.region}: ${item.precip}`);
       const statePath = map.querySelector(`#${item.state}`);
       if (statePath) {
         let color;
-        if (item.precip === 0 || item.precip <= 0.1) color = "lightgray";
+        if (item.precip === 0) color = "white";
+        else if (item.precip <= 0.1) color = "lightgray";
         else if (item.precip <= 0.5) color = "#b3e5fc";
         else if (item.precip <= 1) color = "#42a5f5";
         else if (item.precip <= 2) color = "#1e88e5";
         else if (item.precip <= 4) color = "#ab47bc";
         else color = "#e57373";
         statePath.style.fill = color;
-        statePath.style.opacity = window.selectedStates?.includes(item.state) ? 1 : 0;
+        statePath.style.opacity = 1; // Show selected state's region
         const centroid = { x: statePath.getBBox().x + statePath.getBBox().width / 2, y: statePath.getBBox().y + statePath.getBBox().height / 2 };
         const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
         text.setAttribute("id", `${item.state}-${item.region}-text`);
